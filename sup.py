@@ -76,7 +76,7 @@ class result:
                         break
 
             if letter == 'a':
-                print('kuch galat input maara tune, rerun program')
+                print('Either you are LE, wrna bahut galat input maara tune')
                 break
 
             for row in range(4, 7):
