@@ -1,11 +1,11 @@
 # Wahiyad cheez
 
 This is simply a beginner level thing, extracting all semester results of an individual of batch 2018-22.
-Here I've tried to extract data from the excel files and print the output in console and save this output in result.xlsx
+Here I've tried to extract data from the excel files and print marks and percentage in console in a tabular format, show your performance in a graph based on percentage obtained in different semesters and save detailed result in result.xlsx file created after running this script. 
 
-#required module 
-  openpyxl ,
-  better to install using ```pip install openpyxl``` from cmd.
+# required modules
+  openpyxl, 
+  matplotlib, 
+  prettytable
   
-run main.py and follow onscreen instructions, text wrap in console can make things worse, using pycharm can solve it. 
-Better to open output file result.xlsx created in same directory.
+run main.py and follow onscreen instructions.For detailed result open result.xlsx created in same directory.
