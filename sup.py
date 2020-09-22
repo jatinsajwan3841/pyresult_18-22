@@ -1,7 +1,11 @@
 from openpyxl import load_workbook
 from openpyxl import Workbook
+from prettytable import PrettyTable
 
+x = PrettyTable()
 letter = 'a'
+xval = []
+yval = []
 
 
 class result:
@@ -48,25 +52,25 @@ class result:
         while True:
 
             if self.sem == 1:
-                self.sem1 = load_workbook('dat\\B. TECH. I SEM DEC 18.xlsx', data_only=True)
+                self.semn = load_workbook('dat\\B. TECH. I SEM DEC 18.xlsx', data_only=True)
                 self.head = 1
                 self.body = 4
-                self.currentSheet1 = self.sem1[self.branch]
+                self.currentSheet = self.semn[self.branch]
             elif self.sem == 2:
-                self.sem2 = load_workbook('dat\\B. TECH. II SEM JUNE 2019.xlsx', data_only=True)
+                self.semn = load_workbook('dat\\B. TECH. II SEM JUNE 2019.xlsx', data_only=True)
                 self.head = 7
                 self.body = 10
-                self.currentSheet1 = self.sem2[self.branch]
+                self.currentSheet = self.semn[self.branch]
             elif self.sem == 3:
-                self.sem3 = load_workbook('dat\\B. TECH. III SEM DECEMBER 2019.xlsx', data_only=True)
+                self.semn = load_workbook('dat\\B. TECH. III SEM DECEMBER 2019.xlsx', data_only=True)
                 self.head = 13
                 self.body = 16
-                self.currentSheet1 = self.sem3[self.branch]
+                self.currentSheet = self.semn[self.branch]
 
-            for row in range(1, self.currentSheet1.max_row + 1):
+            for row in range(1, self.currentSheet.max_row + 1):         #searching name or ID
                 for column in "DE":
                     self.cell_name = "{}{}".format(column, row)
-                    ex = self.currentSheet1[self.cell_name].value
+                    ex = self.currentSheet[self.cell_name].value
                     if ex != None and type(ex) != int:
                         ex = ex.strip()
                         ex = ex.lower()
@@ -79,25 +83,54 @@ class result:
                 print('Either you are LE, wrna bahut galat input maara tune')
                 break
 
-            for row in range(4, 7):
-                for column in range(1, self.currentSheet1.max_column + 1):  # Here you can add or reduce the columns
-                    self.sheet.cell(self.head, column).value = self.currentSheet1.cell(row, column).value
-                self.head = self.head + 1
+            for row in range(4, 5):                                     #saving values for table and plot
+                for column in range(1, self.currentSheet.max_column + 1):
+                    tem = self.currentSheet.cell(row, column).value
+                    if type(tem) == str:
+                        tem = tem.strip()
+                        tem = tem.lower()
+                    if tem == 'result':
+                        column -= 1
+                        row += 2
+                        x.field_names = ["sem", "total marks", "percentage"]
+                        yval.append(self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
+                                                                                                          column).value * 100)
+                        xval.append(self.sem)
+                        x.add_row([self.sem, "{}/{}".format(self.currentSheet.cell(letter, column).value,
+                                                            self.currentSheet.cell(row, column).value), "{} %".format(
+                            self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
+                                                                                                  column).value * 100)])
+                        break
 
-            for column in range(1, self.currentSheet1.max_column + 1):  # Here you can add or reduce the columns
-                self.sheet.cell(self.body, column).value = self.currentSheet1.cell(letter, column).value
+            for row in range(4, 7):                                      #saving values to excel file
+                for column in range(1, self.currentSheet.max_column + 1):
+                    self.sheet.cell(self.head, column).value = self.currentSheet.cell(row, column).value
+                self.head += 1
+
+            for column in range(1, self.currentSheet.max_column + 1):
+                self.sheet.cell(self.body, column).value = self.currentSheet.cell(letter, column).value
 
             self.wb.save("result.xlsx")
             break
 
-    def Display(self):
+    def display(self):
+        print(x)
+        import matplotlib.pyplot as plt
+        plt.plot(xval, yval)
+        plt.ylim(1, 100)
+        plt.xlabel('Semester')
+        plt.ylabel('Obtained Percentage')
+        plt.title('Academic performance')
+        plt.show()
+
+    '''def display(self):
         for row in range(1, self.sheet.max_row + 1):
             for column in range(1, self.sheet.max_column + 1):
                 if self.sheet.cell(row, column).value is None:
                     print("\t", end='')
-                if self.sheet.cell(row, column).value is not None:
+                else:
                     print(self.sheet.cell(row, column).value, "\t", end='')
-            print()
+            print()'''
 
     def clear_screen(self):
         import os
