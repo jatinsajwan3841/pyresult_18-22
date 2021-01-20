@@ -117,7 +117,7 @@ class result:
     def display(self):
         print(x)
         import matplotlib.pyplot as plt
-        plt.plot(xval, yval)
+        plt.plot(self.xval, self.yval)
         plt.ylim(1, 100)
         plt.xlabel('Semester')
         plt.ylabel('Obtained Percentage')
