@@ -4,12 +4,13 @@ from prettytable import PrettyTable
 
 x = PrettyTable()
 letter = 'a'
-xval = []
-yval = []
+
 
 
 class result:
     def __init__(self):
+        self.xval = []
+        self.yval = []
         self.wb = Workbook()
         self.sheet = self.wb.active
         while True:
@@ -93,9 +94,9 @@ class result:
                         column -= 1
                         row += 2
                         x.field_names = ["sem", "total marks", "percentage"]
-                        yval.append(self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
+                        self.yval.append(self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
                                                                                                           column).value * 100)
-                        xval.append(self.sem)
+                        self.xval.append(self.sem)
                         x.add_row([self.sem, "{}/{}".format(self.currentSheet.cell(letter, column).value,
                                                             self.currentSheet.cell(row, column).value), "{} %".format(
                             self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
@@ -122,6 +123,9 @@ class result:
         plt.ylabel('Obtained Percentage')
         plt.title('Academic performance')
         plt.show()
+        x.clear
+        xval.clear
+        yval.clear
 
     '''def display(self):
         for row in range(1, self.sheet.max_row + 1):
