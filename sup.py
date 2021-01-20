@@ -124,8 +124,8 @@ class result:
         plt.title('Academic performance')
         plt.show()
         x.clear
-        xval.clear
-        yval.clear
+        self.xval.clear
+        self.yval.clear
 
     '''def display(self):
         for row in range(1, self.sheet.max_row + 1):
