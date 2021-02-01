@@ -99,7 +99,7 @@ class result:
         plt.ylabel('Obtained Percentage')
         plt.title('Academic performance')
         plt.show()
-        x.clear
+        x.clear()
         self.xval.clear
         self.yval.clear
 
