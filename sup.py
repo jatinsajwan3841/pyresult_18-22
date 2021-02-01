@@ -3,105 +3,40 @@ from openpyxl import Workbook
 from prettytable import PrettyTable
 
 x = PrettyTable()
-letter = 'a'
-
 
 
 class result:
-    def __init__(self):
+    def __init__(self, name, branch):
+        self.name = name
+        self.branch = branch
         self.xval = []
         self.yval = []
+        self.total_marks = [0, 0]
         self.wb = Workbook()
         self.sheet = self.wb.active
-        while True:
-            try:
-                n = str(input("Enter your full name \n"))
-                self.name = n.lower()
-                self.clg_id = int(input("enter your college ID \n"))
-                break
-            except ValueError:
-                print("mzak baad me,sahi likho")
+        self.excelfiles = ['dat\\B. TECH. I SEM DEC 18.xlsx', 'dat\\B. TECH. II SEM JUNE 2019.xlsx',
+                           'dat\\B. TECH. III SEM DECEMBER 2019.xlsx', 'dat\\B. TECH. IV SEM DECEMBER 2020.xlsx']
+        self.letter = 'a'
+        self.head = 1
+        self.body = 4            
+        self.select()
 
-        while True:
-            chc = input(
-                "Choose your branch,\n Enter 1 for CS \t 2 for EE \t 3 for ME \t 4 for CE \t 5 for BT \t 6 for EC")
-            if chc == '1':
-                self.branch = 'C S'
-                break
-            elif chc == '2':
-                self.branch = 'EE'
-                break
-            elif chc == '3':
-                self.branch = 'ME'
-                break
-            elif chc == '4':
-                self.branch = 'CE'
-                break
-            elif chc == '5':
-                self.branch = 'BT'
-                break
-            elif chc == '6':
-                self.branch = 'EC'
-                break
-            else:
-                print("mze baad me lena sahi enter kro")
+    def select(self):
 
-    def select(self, sem):
+        for self.sem in range(0, 4):
+            self.semn = load_workbook(
+                self.excelfiles[self.sem], data_only=True)
+            self.currentSheet = self.semn[self.branch]
 
-        self.sem = sem
+            self.search()
 
-        while True:
+            if self.letter == 'a':
+                print('data not matching')
+                if self.sem == 2:
+                    break
+                continue
 
-            if self.sem == 1:
-                self.semn = load_workbook('dat\\B. TECH. I SEM DEC 18.xlsx', data_only=True)
-                self.head = 1
-                self.body = 4
-                self.currentSheet = self.semn[self.branch]
-            elif self.sem == 2:
-                self.semn = load_workbook('dat\\B. TECH. II SEM JUNE 2019.xlsx', data_only=True)
-                self.head = 7
-                self.body = 10
-                self.currentSheet = self.semn[self.branch]
-            elif self.sem == 3:
-                self.semn = load_workbook('dat\\B. TECH. III SEM DECEMBER 2019.xlsx', data_only=True)
-                self.head = 13
-                self.body = 16
-                self.currentSheet = self.semn[self.branch]
-
-            for row in range(1, self.currentSheet.max_row + 1):         #searching name or ID
-                for column in "DE":
-                    self.cell_name = "{}{}".format(column, row)
-                    ex = self.currentSheet[self.cell_name].value
-                    if ex != None and type(ex) != int:
-                        ex = ex.strip()
-                        ex = ex.lower()
-                    if ex == self.clg_id or ex == self.name:
-                        global letter
-                        letter = row
-                        break
-
-            if letter == 'a':
-                print('Either you are LE, wrna bahut galat input maara tune')
-                break
-
-            for row in range(4, 5):                                     #saving values for table and plot
-                for column in range(1, self.currentSheet.max_column + 1):
-                    tem = self.currentSheet.cell(row, column).value
-                    if type(tem) == str:
-                        tem = tem.strip()
-                        tem = tem.lower()
-                    if tem == 'result':
-                        column -= 1
-                        row += 2
-                        x.field_names = ["sem", "total marks", "percentage"]
-                        self.yval.append(self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
-                                                                                                          column).value * 100)
-                        self.xval.append(self.sem)
-                        x.add_row([self.sem, "{}/{}".format(self.currentSheet.cell(letter, column).value,
-                                                            self.currentSheet.cell(row, column).value), "{} %".format(
-                            self.currentSheet.cell(letter, column).value / self.currentSheet.cell(row,
-                                                                                                  column).value * 100)])
-                        break
+            self.vals()
 
             for row in range(4, 7):                                      #saving values to excel file
                 for column in range(1, self.currentSheet.max_column + 1):
@@ -109,12 +44,53 @@ class result:
                 self.head += 1
 
             for column in range(1, self.currentSheet.max_column + 1):
-                self.sheet.cell(self.body, column).value = self.currentSheet.cell(letter, column).value
+                self.sheet.cell(self.body, column).value = self.currentSheet.cell(self.letter, column).value
 
+            self.head += 3
+            self.body += 6
             self.wb.save("result.xlsx")
-            break
+
+    def search(self):   # searching name
+        for row in range(7, self.currentSheet.max_row + 1):
+            for column in "DE":
+                self.cell_name = "{}{}".format(column, row)
+                ex = self.currentSheet[self.cell_name].value
+                if type(ex) == str:
+                    ex = ex.strip()
+                    ex = ex.lower()
+                if ex == self.name:
+                    self.letter = row
+                    return 0
+
+    def vals(self):                          # saving values for table and plot
+        for row in range(4, 5):
+            for column in range(1, self.currentSheet.max_column + 1):
+                tem = self.currentSheet.cell(row, column).value
+                if type(tem) == str:
+                    tem = tem.strip()
+                    tem = tem.lower()
+                    if tem == 'result':
+                        column -= 1
+                        row += 2
+                        self.sem += 1
+                        x.field_names = ["Sem", "Marks", "Percentage"]
+                        self.yval.append(self.currentSheet.cell(self.letter, column).value / self.currentSheet.cell(row,
+                                                                                                                    column).value * 100)
+                        self.xval.append(self.sem)
+                        x.add_row([self.sem, "{}/{}".format(self.currentSheet.cell(self.letter, column).value, self.currentSheet.cell(row, column).value),
+                                   "{} %".format(round(self.currentSheet.cell(self.letter, column).value / self.currentSheet.cell(row, column).value * 100, 4))])
+                        self.total_marks[0] = self.total_marks[0] + \
+                            self.currentSheet.cell(
+                                self.letter, column).value
+                        self.total_marks[1] = self.total_marks[1] + \
+                            self.currentSheet.cell(row, column).value
+                        return 0
 
     def display(self):
+        self.clear_screen()
+        print("Hello ",self.name,'\n')
+        x.add_row(["Total :", "{}/{}".format(self.total_marks[0], self.total_marks[1]),
+                       "{} %".format(round(self.total_marks[0]/self.total_marks[1]*100 , 4))])
         print(x)
         import matplotlib.pyplot as plt
         plt.plot(self.xval, self.yval)
@@ -126,15 +102,6 @@ class result:
         x.clear
         self.xval.clear
         self.yval.clear
-
-    '''def display(self):
-        for row in range(1, self.sheet.max_row + 1):
-            for column in range(1, self.sheet.max_column + 1):
-                if self.sheet.cell(row, column).value is None:
-                    print("\t", end='')
-                else:
-                    print(self.sheet.cell(row, column).value, "\t", end='')
-            print()'''
 
     def clear_screen(self):
         import os
