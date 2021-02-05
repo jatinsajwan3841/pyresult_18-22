@@ -1,9 +1,6 @@
-from openpyxl import load_workbook
-from openpyxl import Workbook
 from prettytable import PrettyTable
 
 x = PrettyTable()
-
 
 class result:
     def __init__(self, name, branch):
@@ -12,6 +9,7 @@ class result:
         self.xval = []
         self.yval = []
         self.total_marks = [0, 0]
+        from openpyxl import Workbook
         self.wb = Workbook()
         self.sheet = self.wb.active
         self.excelfiles = ['dat\\B. TECH. I SEM DEC 18.xlsx', 'dat\\B. TECH. II SEM JUNE 2019.xlsx',
@@ -22,7 +20,7 @@ class result:
         self.select()
 
     def select(self):
-
+        from openpyxl import load_workbook
         for self.sem in range(0, 4):
             self.semn = load_workbook(
                 self.excelfiles[self.sem], data_only=True)
